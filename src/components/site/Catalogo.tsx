@@ -114,7 +114,7 @@ export function Catalogo() {
           className="mt-10 grid animate-[fade-in_0.5s_ease-out] grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6"
         >
           {lista.map((p, i) => (
-            <CardProduto key={p.id} produto={p} grande={p.destaque && i === 0} />
+            <CardProduto key={p.id} produto={p} grande={p.destaque === true && i === 0} />
           ))}
         </div>
       </div>
