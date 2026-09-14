@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CONTATO,
   categorias,
-  produtosPorCategoria,
+  produtos as produtosIniciais,
   type CategoriaId,
   type Produto,
 } from "@/data/produtos";
+import { listarProdutos } from "@/lib/produtos-db";
 import { Reveal } from "./Reveal";
 import { cn } from "@/lib/utils";
 
@@ -64,7 +65,22 @@ function CardProduto({ produto, grande }: { produto: Produto; grande?: boolean }
 
 export function Catalogo() {
   const [ativa, setAtiva] = useState<CategoriaId>("aneis");
-  const lista = produtosPorCategoria(ativa);
+  const [todos, setTodos] = useState<Produto[]>(produtosIniciais);
+
+  // Os produtos vêm do painel de edição; a lista inicial é só um reserva.
+  useEffect(() => {
+    let ativo = true;
+    listarProdutos()
+      .then((lista) => {
+        if (ativo && lista.length > 0) setTodos(lista);
+      })
+      .catch(() => undefined);
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  const lista = todos.filter((p) => p.categoria === ativa);
 
   return (
     <section id="joias" className="scroll-mt-24 bg-offwhite py-20 lg:py-28">
