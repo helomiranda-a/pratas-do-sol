@@ -39,18 +39,21 @@ export async function listarProdutos(): Promise<(Produto & { imagemBruta: string
 
   const linhas = (data ?? []) as ProdutoDB[];
   return Promise.all(
-    linhas.map(async (p) => ({
-      id: p.id,
-      nome: p.nome,
-      categoria: p.categoria as CategoriaId,
-      imagem: await resolverImagem(p.imagem),
-      imagemBruta: p.imagem,
-      preco: p.preco ?? undefined,
-      material: p.material ?? undefined,
-      descricao: p.descricao ?? undefined,
-      disponibilidade: p.disponibilidade,
-      destaque: p.destaque,
-    })),
+    linhas.map(async (p) => {
+      const item: Produto & { imagemBruta: string } = {
+        id: p.id,
+        nome: p.nome,
+        categoria: p.categoria as CategoriaId,
+        imagem: await resolverImagem(p.imagem),
+        imagemBruta: p.imagem,
+        disponibilidade: p.disponibilidade,
+        destaque: p.destaque,
+      };
+      if (p.preco) item.preco = p.preco;
+      if (p.material) item.material = p.material;
+      if (p.descricao) item.descricao = p.descricao;
+      return item;
+    }),
   );
 }
 
